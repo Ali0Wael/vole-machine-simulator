@@ -1,0 +1,21 @@
+-Until a structure type variable is formed, the structure member variables do not occupy memory.
+ All of the structure instances are stored at a contiguous memory location.
+
+-another way of declaring the structure :
+struct student {int rno;char nm[20];float fees;} std1, std2; 
+
+-using ulong = unsigned long int; لتبسيط الانواع المعقدة
+
+-When there are a significant number of structure members, passing them to a function is inefficient.
+ As a result, passing structures using pointers is recommended. A structure pointer could be passed to a function.
+ The structure's address is passed as an actual argument in this situation.
+
+-Structures that hold a reference to data of the same kind are known as self-referential structures. 
+ Self-referential structures are those that have one or more pointers that point to the same type of structure as its member.
+ ex: struct node {int val;struct node *next;}
+
+-static variable differs from global variable in scope and encapsulation.
+
+-Declaring a variable in class is called (Syntactic Sugar), and what really happens is that this variable will be thrown
+ to the constructor in the background, and will initialize it when creating an object.
+
