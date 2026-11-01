@@ -16,9 +16,6 @@ class CU{
         Register& pc;
         IR& ir;
         string& screen_buffer_string;
-    public:
-        CU(Memory memory , Register registers[16] , ALU alu , Register pc , IR ir , string screen_buffer_string);
-        void execute_step();
         void fetch();
         bool validate_instruction();
         void execute();
@@ -29,6 +26,10 @@ class CU{
         void jump();
         void halt();
         void update_pc();
+    public:
+        CU(Memory memory , Register registers[16] , ALU alu , Register pc , IR ir , string screen_buffer_string);
+        void execute_step();
+        
 };
 
 
