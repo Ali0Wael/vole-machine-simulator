@@ -1,21 +1,3 @@
-<<<<<<< HEAD
-#ifndef MEMORY_H
-#define MEMORY_H
-
-
-class Memory{
-
-
-    
-
-
-};
-
-
-
-
-#endif
-=======
 #pragma once
 
 #include <cstdint>
@@ -33,4 +15,3 @@ class Memory {
         return cells;
     }
 };
->>>>>>> db2cc7b757f6f7d37835c0f5ba91ef9d16997051
