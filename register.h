@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstdint>
 
+using namespace std;
+
 class Register {
 
 private:
