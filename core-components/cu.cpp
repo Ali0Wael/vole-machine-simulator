@@ -5,13 +5,19 @@
 CU::CU(Memory& memory , Register (&registers)[16] , ALU& alu , Register& pc , IR& ir , string& screen_buffer_string):
     memory(memory), registers(registers), alu(alu), pc(pc), ir(ir), screen_buffer_string(screen_buffer_string){}
 
+
+void CU::update_pc(){
+    pc.set_value(pc.get_value()+2);
+}
+
+
 void CU::fetch(){
     uint16_t first_part = memory.read(pc.get_value());
     uint8_t second_part = memory.read(pc.get_value()+1);
     first_part <<= 8;
     first_part += second_part;
     ir.load(first_part);
-    pc.set_value(pc.get_value() + 2);
+    update_pc();
 }
 
 bool CU::validate_instruction(){
@@ -63,17 +69,21 @@ void CU::execute(){
             break;
         
         case 11:
-            // JUMP
+            jump();
             break;
         
         case 12:
-            // HALT
+            halt();
             break;
     }
 }
 
+uint8_t CU::calculate_memory_address(uint8_t op1 , uint8_t op2){    // get the index in memory
+        return 16 * op1 + op2;
+}
+
 void CU::load(){
-    uint8_t i = 16 * ir.get_operand1() + ir.get_operand2(); // get the index in memory
+    uint8_t i = calculate_memory_address(ir.get_operand1(),ir.get_operand2());    // get the index in memory
     registers[ir.get_dest()].set_value(memory.read(i));
 }
 
@@ -85,11 +95,29 @@ void CU::load(float value){
 }
 
 void CU::load_immediate(){
-    uint8_t i = 16 * ir.get_operand1() + ir.get_operand2(); // get the index in memory
+    uint8_t i = calculate_memory_address(ir.get_operand1(),ir.get_operand2()); 
     registers[ir.get_dest()].set_value(i);
 }
 
 void CU::store(){
-    uint8_t i = 16 * ir.get_operand1() + ir.get_operand2(); // get the index in memory
+    uint8_t i = calculate_memory_address(ir.get_operand1(),ir.get_operand2()); 
     memory.write(i, registers[ir.get_dest()].get_value());
+}
+
+
+void CU::move(){
+    uint8_t value = registers[ir.get_operand1()].get_value();
+    registers[ir.get_operand2()].set_value(value);
+}
+
+void CU::jump(){
+    if(registers[ir.get_dest()].get_value() == registers[0].get_value()){
+        uint8_t i = calculate_memory_address(ir.get_operand1(),ir.get_operand2());
+        pc.set_value(i);
+    }
+}
+
+
+void CU::halt(){
+
 }
