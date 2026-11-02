@@ -1,3 +1,6 @@
+
+#ifndef REGISTER_H
+#define REGISTER_H
 #include <iostream>
 #include <cstdint>
 
@@ -24,3 +27,5 @@ public:
 
 
 };
+
+#endif

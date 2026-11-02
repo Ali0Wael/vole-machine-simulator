@@ -4,12 +4,6 @@
 #include <string>
 using namespace std;
 
-uint8_t hexToUint(uint16_t obj){
-    uint8_t temp = obj & 0b00001111;
-    
-    return temp;
-}
-
 class IR{
 
     private:
@@ -20,10 +14,9 @@ class IR{
         void load(uint16_t ins){
             instruction = ins; // set instruction
             
-            // convert hex values to int and store its ASCII in string (to reduce consuming of memory)
-
+            // extract op-code destination and operands
             for (int i = 0; i < 4; i++){
-                decoded[i] = hexToUint((instruction >> i * 4));
+                decoded[i] = (instruction >> i * 4) & 0b00001111;
             }
         }
 
