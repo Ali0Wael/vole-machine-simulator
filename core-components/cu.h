@@ -5,6 +5,7 @@
 #include "alu.h"
 #include "memory.h"
 #include "register.h"
+
 #include <cstdint>
 
 class CU{
@@ -24,15 +25,15 @@ class CU{
         void move();
         void jump();
         void halt();
+        void error();
         uint8_t calculate_memory_address(uint8_t op1 , uint8_t op2);
         void update_pc();
-    public:
-        CU(Memory& memory , Register (&registers)[16] , ALU& alu , Register& pc , IR& ir , string& screen_buffer_string);
         void fetch();
         bool validate_instruction();
         void execute();
-        void execute_step();
-        
+    public:
+        CU(Memory& memory , Register (&registers)[16] , ALU& alu , Register& pc , IR& ir , string& screen_buffer_string);
+        void execute_step();      
 };
 
 

@@ -10,7 +10,6 @@ void CU::update_pc(){
     pc.set_value(pc.get_value()+2);
 }
 
-
 void CU::fetch(){
     uint16_t first_part = memory.read(pc.get_value());
     uint8_t second_part = memory.read(pc.get_value()+1);
@@ -78,6 +77,17 @@ void CU::execute(){
     }
 }
 
+void CU::execute_step(){
+    fetch();
+    if(validate_instruction()){
+        execute();
+    }
+    else{
+        error();
+    }
+}
+
+
 uint8_t CU::calculate_memory_address(uint8_t op1 , uint8_t op2){    // get the index in memory
         return 16 * op1 + op2;
 }
@@ -119,5 +129,9 @@ void CU::jump(){
 
 
 void CU::halt(){
+    
+}
+
+void CU::error(){
 
 }
