@@ -27,7 +27,7 @@ class ALU{
         }
 
         uint8_t rotate(uint8_t value, uint8_t count){
-            return value >> count;
+            return (value >> count) | (value << (8 - count));
         }
 
 

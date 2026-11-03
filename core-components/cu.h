@@ -26,7 +26,7 @@ class CU{
         void jump();
         void halt();
         void error();
-        uint8_t calculate_memory_address(uint8_t op1 , uint8_t op2);
+        uint8_t calculate_memory_address();
         void update_pc();
         void fetch();
         bool validate_instruction();
