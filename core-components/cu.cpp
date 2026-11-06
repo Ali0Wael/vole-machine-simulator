@@ -1,9 +1,11 @@
 #include "cu.h"
 
+#include <sstream>
+#include <iomanip>
 
 
-CU::CU(Memory& memory , Register (&registers)[16] , ALU& alu , Register& pc , IR& ir , string& screen_buffer_string):
-    memory(memory), registers(registers), alu(alu), pc(pc), ir(ir), screen_buffer_string(screen_buffer_string){}
+CU::CU(Memory& memory , Register (&registers)[16] , ALU& alu , Register& pc , IR& ir , string& screen_buffer_string, bool& halted, bool& error):
+    memory(memory), registers(registers), alu(alu), pc(pc), ir(ir), screen_buffer_string(screen_buffer_string), halted(halted) , error(error){}
 
 
 void CU::update_pc(){
@@ -89,7 +91,7 @@ void CU::execute_step(){
         execute();
     }
     else{
-        error();
+        error_exist();
     }
 }
 
@@ -117,7 +119,14 @@ void CU::load_immediate(){
 
 void CU::store(){
     uint8_t i = calculate_memory_address(); 
-    memory.write(i, registers[ir.get_dest()].get_value());
+    uint8_t value = registers[ir.get_dest()].get_value();
+    memory.write(i, value);
+
+    if(i==255){
+        stringstream ss;
+        ss << hex << uppercase << setw(2) << setfill('0') << static_cast<int> (value);
+        screen_buffer_string+=ss.str();
+    }
 }
 
 
@@ -135,9 +144,9 @@ void CU::jump(){
 
 
 void CU::halt(){
-    
+    halted = true;
 }
 
-void CU::error(){
-
+void CU::error_exist(){
+    error = true;
 }

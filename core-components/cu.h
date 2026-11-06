@@ -16,6 +16,8 @@ class CU{
         Register& pc;
         IR& ir;
         string& screen_buffer_string;
+        bool& halted;
+        bool& error;
         
         void load();
         void load(uint8_t value);
@@ -25,14 +27,14 @@ class CU{
         void move();
         void jump();
         void halt();
-        void error();
+        void error_exist();
         uint8_t calculate_memory_address();
         void update_pc();
         void fetch();
         bool validate_instruction();
         void execute();
     public:
-        CU(Memory& memory , Register (&registers)[16] , ALU& alu , Register& pc , IR& ir , string& screen_buffer_string);
+        CU(Memory& memory , Register (&registers)[16] , ALU& alu , Register& pc , IR& ir , string& screen_buffer_string, bool& halted , bool& error);
         void execute_step();      
 };
 

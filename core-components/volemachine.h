@@ -10,25 +10,31 @@
 #include <array>
 #include <string>
 
+
 class VoleMachine {
 
-private:
+    private:
 
-    Register registers[16];
-    Memory memory;
-    ALU alu;
-    CU cu;
-    uint8_t pc = 0x00;
-    IR ir;
-    bool halted;
-    string screen_buffer_;
+        Register registers[16];
+        Memory memory;
+        ALU alu;
+        CU cu;
+        Register pc;
+        IR ir;
+        bool halted;
+        bool error;
+        string screen_buffer_;
 
-public:
+        bool get_halted();
+        bool get_error();
 
-    void LoadProgram();
-    void OverwriteRegister(uint8_t index, uint8_t value);
-    void Step();
-    void RunAll();
-    string get_screen_buffer();
-    bool get_halted();
+    public:
+        VoleMachine(): cu(memory,registers,alu,pc,ir,screen_buffer_,halted,error), halted(false),error(false){}
+        void load_program(string filename);
+        void overwrite_register(uint8_t index, uint8_t value);
+        void step();
+        void run_all();
+        string get_screen_buffer();
+    
+
 };

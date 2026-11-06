@@ -1,40 +1,41 @@
-#include "vole machine.h"
+#include "volemachine.h"
 #include<string>
 #include <iostream>
 #include<fstream>
 
 using namespace std;
 
-void VoleMachine::LoadProgram( string filename) {
+void VoleMachine::load_program(string filename) {
 
     ifstream file(filename);
     if (!file.is_open()) { return; }
 
-uint8_t c_address = 0x00;
-string name;
+    uint8_t c_address = 0x00;
+    string name;
 
-while (getline(file, name)) {
+    while (getline(file, name)) {
 
-    string ins1 = name.substr(0, 2);
-    string ins2 = name.substr(2, 2);
-    
-    uint8_t instruction =stoi(ins1, nullptr, 16);
-    memory.write(c_address, instruction);
-    c_address += 1;
+        string ins1 = name.substr(0, 2);
+        string ins2 = name.substr(2, 2);
+        
+        uint8_t instruction =stoi(ins1, nullptr, 16);
+        memory.write(c_address, instruction);
+        c_address += 1;
 
-    instruction = stoi(ins2, nullptr, 16);
-    memory.write(c_address, instruction);
-    c_address += 1;
+        instruction = stoi(ins2, nullptr, 16);
+        memory.write(c_address, instruction);
+        c_address += 1;
+    }
 }
 
+//string ins = to_string(memory.read(pc)) + to_string(memory.read(pc+1));
+//uint8_t instruction = stoi(ins, nullptr, 16);
 
 
-}
 
 
 
-
-void VoleMachine::OverwriteRegister(uint8_t index, uint8_t value) {
+void VoleMachine::overwrite_register(uint8_t index, uint8_t value) {
     if (index < 16)
         registers[index].set_value(value);
 }
@@ -44,6 +45,34 @@ void VoleMachine::OverwriteRegister(uint8_t index, uint8_t value) {
 
 
 
+void VoleMachine::step(){
+    if(!get_halted() && !get_error()) cu.execute_step();
+}
+
+void VoleMachine::run_all() {
+    while (!get_halted() && !get_error()) {
+        cu.execute_step();
+    }
+};
+
+
+
+
+
+bool VoleMachine::get_halted() {
+    return halted;
+}
+bool VoleMachine::get_error(){
+    return error;
+}
+string VoleMachine::get_screen_buffer() {
+    return screen_buffer_;
+}
+
+
+
+
+/*
 void VoleMachine::Step() {
 
     if (get_halted()) { return; }
@@ -146,34 +175,4 @@ void VoleMachine::Step() {
         pc += 2;
     }
 };
-
-
-
-
-    //string ins = to_string(memory.read(pc)) + to_string(memory.read(pc+1));
-    //uint8_t instruction = stoi(ins, nullptr, 16);
-
-
-void VoleMachine::RunAll() {
-
-    while (!get_halted()) {
-
-        Step();
-    }
-
-};
-
-
-
-
-
-string VoleMachine::get_screen_buffer() {
-    return screen_buffer_;
-}
-bool VoleMachine::get_halted() {
-    return halted;
-}
-
-
-
-
+*/
