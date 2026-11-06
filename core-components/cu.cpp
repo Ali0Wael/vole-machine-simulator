@@ -29,6 +29,12 @@ bool CU::validate_instruction(){
 }
 
 void CU::execute(){
+    uint8_t i1, i2;
+    if (5 <= ir.get_opcode() && ir.get_opcode() <= 10){
+        uint8_t i1 = ir.get_operand1();
+        uint8_t i2 = ir.get_operand1();
+    }
+
     switch(ir.get_opcode()){
         case 1:
             load();
@@ -48,23 +54,23 @@ void CU::execute(){
         
         case 5:
         case 6:
-            load(alu.add(ir.get_operand1(), ir.get_operand2()));
+            load(alu.add(registers[i1].get_value(), registers[i2].get_value()));
             break;
 
         case 7:
-            load(alu.OR(ir.get_operand1(), ir.get_operand2()));
+            load(alu.OR(registers[i1].get_value(), registers[i2].get_value()));
             break;
 
         case 8:
-            load(alu.AND(ir.get_operand1(), ir.get_operand2()));
+            load(alu.AND(registers[i1].get_value(), registers[i2].get_value()));
             break;
 
         case 9:
-            load(alu.XOR(ir.get_operand1(), ir.get_operand2()));
+            load(alu.XOR(registers[i1].get_value(), registers[i2].get_value()));
             break;
         
         case 10:
-            load(alu.rotate(ir.get_operand1(), ir.get_operand2()));
+            load(alu.rotate(registers[i1].get_value(), registers[i2].get_value()));
             break;
         
         case 11:
@@ -89,7 +95,7 @@ void CU::execute_step(){
 
 
 uint8_t CU::calculate_memory_address(){    // get the index in memory
-        return 16 * ir.get_operand1() + ir.get_operand1();
+        return 16 * ir.get_operand1() + ir.get_operand2();
 }
 
 void CU::load(){
