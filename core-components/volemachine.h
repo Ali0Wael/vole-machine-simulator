@@ -25,6 +25,7 @@ class VoleMachine {
         bool error;
         string screen_buffer_;
 
+       
     public:
         VoleMachine(): cu(memory,registers,alu,pc,ir,screen_buffer_,halted,error), halted(false),error(false){}
         void load_program(string filename);
@@ -32,6 +33,6 @@ class VoleMachine {
         void step();
         void run_all();
         string get_screen_buffer();
-    
-
+        bool get_halted();
+        bool get_error();
 };
