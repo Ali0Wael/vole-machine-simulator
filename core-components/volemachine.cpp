@@ -46,15 +46,14 @@ void VoleMachine::overwrite_register(uint8_t index, uint8_t value) {
 
 
 void VoleMachine::step(){
-    if(!get_halted() && !get_error()) cu.execute_step();
+    if(!halted && !error) cu.execute_step();
 }
 
 void VoleMachine::run_all() {
-    while (!get_halted() && !get_error()) {
+    while (halted && !error) {
         cu.execute_step();
     }
 };
-
 
 
 
