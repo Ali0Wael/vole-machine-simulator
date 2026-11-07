@@ -39,6 +39,11 @@ void VoleMachine::overwrite_register(uint8_t index, uint8_t value) {
     if (index < 16)
         registers[index].set_value(value);
 }
+void VoleMachine::overwrite_memory(uint8_t index, uint8_t value) {
+    if (index < 255)
+        memory.write(index,value);
+}
+
 
 
 

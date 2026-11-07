@@ -30,6 +30,7 @@ class VoleMachine {
         VoleMachine(): cu(memory,registers,alu,pc,ir,screen_buffer_,halted,error), halted(false),error(false){}
         void load_program(string filename);
         void overwrite_register(uint8_t index, uint8_t value);
+        void overwrite_memory(uint8_t index, uint8_t value);
         void step();
         void run_all();
         string get_screen_buffer();
