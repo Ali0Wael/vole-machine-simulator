@@ -12,6 +12,9 @@ void SimulatorUI::main_loop(){
             handle_load_file();
             break;
         case 2:
+            handle_run();
+            break;
+        case 3:
             handle_overwrite();
             break;
     }
@@ -24,9 +27,10 @@ void SimulatorUI::main_loop(){
 void SimulatorUI::show_menu(){
 
     cout<<"---------- Vole Machine ----------\n";
-    cout<<"Please enter a number for its respective option\n";
+    cout<<"Please enter a number for its corresponding option:\n";
     cout<<"Enter 1 to load program from a file\n";
-    cout<<"Enter 2 to overwrite the content of a register or memory cell\n";
+    cout<<"Enter 2 to run program\n";
+    cout<<"Enter 3 to overwrite the contents of a register or memory cell\n";
 }
 
 
@@ -36,18 +40,40 @@ void SimulatorUI::show_menu(){
 
 void SimulatorUI::handle_load_file(){
     string filename;
+    cout<<"Enter file name:\n";
     cin>>filename;
     machine.load_program(filename);
 }
 
 
 
+void SimulatorUI::handle_run(){
+    char c;
+    cout<<"Select Run mode:\n";
+    cout<<"Enter A for all at once (default)\n";
+    cout<<"Enter S for step by step\n";
+    cin>>c;
+
+    switch(toupper(c)){
+        case 'S':
+            machine.step();
+            display_state();
+            break;
+        default:
+            machine.run_all();
+            display_state();
+            break;
+    }
+
+
+}
+
 
 
 void SimulatorUI::handle_overwrite(){
     char c;
     cout<<"Enter M to modify a memory cell\n";
-    cout<<"Enter R if you want to modify a Register\n";
+    cout<<"Enter R to modify a Register\n";
     cin>>c;
 
 
@@ -76,4 +102,9 @@ void SimulatorUI::handle_overwrite(){
 
 }
 
+
+void SimulatorUI::display_state(){
+    
+
+}
 
