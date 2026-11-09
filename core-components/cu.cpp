@@ -55,6 +55,8 @@ void CU::execute(){
             break;
         
         case 5:
+            alu.add(registers[i1].get_value(), registers[i2].get_value());
+            break;
         case 6:
             load(alu.add(registers[i1].get_value(), registers[i2].get_value()));
             break;

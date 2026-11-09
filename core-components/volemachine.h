@@ -31,6 +31,10 @@ class VoleMachine {
         void load_program(string filename);
         void overwrite_register(uint8_t index, uint8_t value);
         void overwrite_memory(uint8_t index, uint8_t value);
+        uint8_t get_memory(uint8_t address);
+        uint8_t get_register(uint8_t index);
+        uint8_t get_pc();
+        uint16_t get_ir();
         void step();
         void run_all();
         string get_screen_buffer();

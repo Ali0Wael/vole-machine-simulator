@@ -45,6 +45,18 @@ void VoleMachine::overwrite_memory(uint8_t index, uint8_t value) {
 }
 
 
+uint8_t VoleMachine::get_memory(uint8_t address){
+    return memory.read(address);
+}
+uint8_t VoleMachine::get_register(uint8_t index){
+    return registers[index].get_value();
+}
+uint8_t VoleMachine::get_pc(){
+    return pc.get_value();
+}
+uint16_t VoleMachine::get_ir(){
+    return ir.get_instruction();
+}
 
 
 
