@@ -35,7 +35,8 @@ class CU{
         void execute();
     public:
         CU(Memory& memory , Register (&registers)[16] , ALU& alu , Register& pc , IR& ir , string& screen_buffer_string, bool& halted , bool& error);
-        void execute_step();      
+        void execute_step(); 
+        void write_to_screen(uint8_t value);     
 };
 
 

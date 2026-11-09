@@ -98,6 +98,10 @@ void CU::execute_step(){
 }
 
 
+
+
+
+
 uint8_t CU::calculate_memory_address(){    // get the index in memory
         return 16 * ir.get_operand1() + ir.get_operand2();
 }
@@ -119,15 +123,20 @@ void CU::load_immediate(){
     registers[ir.get_dest()].set_value(i);
 }
 
+
+
+void CU::write_to_screen(uint8_t value){
+    stringstream ss;
+    ss << hex << uppercase << setw(2) << setfill('0') << static_cast<int> (value);
+    screen_buffer_string+=ss.str();
+}
 void CU::store(){
     uint8_t i = calculate_memory_address(); 
     uint8_t value = registers[ir.get_dest()].get_value();
     memory.write(i, value);
 
     if(i==255){
-        stringstream ss;
-        ss << hex << uppercase << setw(2) << setfill('0') << static_cast<int> (value);
-        screen_buffer_string+=ss.str();
+        write_to_screen(value);
     }
 }
 

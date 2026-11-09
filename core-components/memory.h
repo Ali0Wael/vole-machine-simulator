@@ -13,7 +13,7 @@ class Memory {
         void write(uint8_t address, uint8_t value) {
             cells_[address] = value;
         }
-        const std::array <uint8_t, 256>& get_cells() const {
-            return cells_;
+        void clear() {
+            cells_.fill(0);
         }
 };
