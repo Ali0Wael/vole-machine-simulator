@@ -35,10 +35,12 @@ class ALU{
         
     public:
         uint8_t add(uint8_t a, uint8_t b){
-            int8_t i_a = static_cast<int8_t>(a & 0x7F); // to store bit sequence in the another data type
-            int8_t i_b = static_cast<int8_t>(b & 0x7F);
+            int8_t i_a = bit_cast<int8_t>(a); // to store bit sequence in the another data type
+            int8_t i_b = bit_cast<int8_t>(b);
+
+            int8_t sum = i_a + i_b;
             
-            return  static_cast<uint8_t>(i_a + i_b);
+            return  bit_cast<uint8_t>(sum);
         }
 
         uint8_t fp_add(uint8_t a, uint8_t b){
