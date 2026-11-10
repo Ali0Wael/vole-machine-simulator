@@ -19,6 +19,7 @@
 #include <QFile>        
 #include <QTextStream>  
 #include <QMessageBox>
+#include <QFont>
 
 #include "core-components/volemachine.h"
 
@@ -35,6 +36,15 @@ int main(int argc, char *argv[]) {
 
     QVBoxLayout *mainLayout = new QVBoxLayout(central);
 
+    QFont monoFont("Consolas", 10);
+
+    auto createDivider = []() {
+        QFrame *divider = new QFrame();
+        divider->setFrameShape(QFrame::VLine);
+        divider->setFrameShadow(QFrame::Sunken);
+        return divider;
+    };
+
     // --- Top Toolbar (Buttons & Inputs) ---
     QHBoxLayout *buttonLayout = new QHBoxLayout();
 
@@ -42,6 +52,10 @@ int main(int argc, char *argv[]) {
     QLineEdit *loadAddressInput = new QLineEdit("00"); 
     loadAddressInput->setFixedWidth(50);
     loadAddressInput->setMaxLength(2); 
+    loadAddressInput->setFixedWidth(40);
+    loadAddressInput->setMaxLength(2); 
+    loadAddressInput->setAlignment(Qt::AlignCenter);
+    loadAddressInput->setFont(monoFont);
 
     QRegularExpression hexRegex("^[0-9a-fA-F]{1,2}$");
     QValidator *hexValidator = new QRegularExpressionValidator(hexRegex, loadAddressInput);
@@ -54,21 +68,27 @@ int main(int argc, char *argv[]) {
     QPushButton *overwriteRegButton = new QPushButton("Overwrite Register");
     QPushButton *overwriteMemButton = new QPushButton("Overwrite Memory");
 
-    buttonLayout->addWidget(loadAddressLabel);
+   buttonLayout->addWidget(loadAddressLabel);
     buttonLayout->addWidget(loadAddressInput);
     buttonLayout->addWidget(loadButton);
     
-    buttonLayout->addSpacing(20); 
+    buttonLayout->addWidget(createDivider()); 
     
     buttonLayout->addWidget(stepButton);
     buttonLayout->addWidget(runButton);
-    buttonLayout->addWidget(resetButton); // Placed next to Run All
+    buttonLayout->addWidget(resetButton);
     
-    buttonLayout->addSpacing(20); 
+    buttonLayout->addWidget(createDivider()); 
     
     buttonLayout->addWidget(overwriteRegButton);
     buttonLayout->addWidget(overwriteMemButton);
     buttonLayout->addStretch();
+
+    QLabel *statusLabel = new QLabel("Status: Idle");
+    statusLabel->setStyleSheet("font-weight: bold; padding: 4px 10px; border-radius: 4px; background: #e0e0e0; color: #555;");
+    buttonLayout->addWidget(statusLabel);
+
+
 
     mainLayout->addLayout(buttonLayout);
 
@@ -85,6 +105,7 @@ int main(int argc, char *argv[]) {
     QLabel *registerLabels[16];
     for (int i = 0; i < 16; i++) {
         registerLabels[i] = new QLabel(QString("R%1: 00").arg(i, 0, 16).toUpper());
+        registerLabels[i]->setFont(monoFont);
         registerLabels[i]->setMinimumHeight(30);
         registerLabels[i]->setFrameShape(QFrame::Box);
         registerLabels[i]->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
@@ -96,11 +117,13 @@ int main(int argc, char *argv[]) {
     QVBoxLayout *controlLayout = new QVBoxLayout(controlBox);
 
     QLabel *pcLabel = new QLabel("PC: 00");
-    QLabel *irLabel = new QLabel("IR: 00 00");
+    QLabel *irLabel = new QLabel("IR: 0000");
     pcLabel->setMinimumHeight(35);
     irLabel->setMinimumHeight(35);
     pcLabel->setFrameShape(QFrame::Box);
     irLabel->setFrameShape(QFrame::Box);
+    pcLabel->setFont(monoFont);
+    irLabel->setFont(monoFont);
 
     controlLayout->addWidget(pcLabel);
     controlLayout->addWidget(irLabel);
@@ -111,6 +134,7 @@ int main(int argc, char *argv[]) {
     QVBoxLayout *memoryLayout = new QVBoxLayout(memoryBox);
     QTableWidget *memoryTable = new QTableWidget(16, 16);
 
+    memoryTable->setFont(monoFont);
     memoryTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     QStringList headers;
@@ -140,12 +164,14 @@ int main(int argc, char *argv[]) {
     QVBoxLayout *programLayout = new QVBoxLayout(programBox);
     QTextEdit *programDisplay = new QTextEdit();
     programDisplay->setReadOnly(true);
+    programDisplay->setFont(monoFont);
     programLayout->addWidget(programDisplay);
 
     QGroupBox *outputBox = new QGroupBox("Screen Output (Address FF)");
     QVBoxLayout *outputLayout = new QVBoxLayout(outputBox);
     QTextEdit *outputDisplay = new QTextEdit();
     outputDisplay->setReadOnly(true);
+    outputDisplay->setFont(monoFont);
     outputLayout->addWidget(outputDisplay);
 
     rightSideLayout->addWidget(programBox);
@@ -179,9 +205,7 @@ int main(int argc, char *argv[]) {
         uint8_t pc = machine.get_pc(); 
         uint16_t ir = machine.get_ir();
         pcLabel->setText(QString("PC: %1").arg(pc, 2, 16, QChar('0')).toUpper());
-        irLabel->setText(QString("IR: %1").arg(ir, 4, 16, QChar('0')).toUpper());
-        
-        QString screenStr = QString::fromStdString(machine.get_screen_buffer()); 
+        irLabel->setText(QString("IR: %1").arg(ir, 4, 16, QChar('0')).toUpper());        QString screenStr = QString::fromStdString(machine.get_screen_buffer()); 
         outputDisplay->setText(screenStr);
     };
 
@@ -207,9 +231,14 @@ int main(int argc, char *argv[]) {
                 bool success = machine.load_program(fileName.toStdString(), static_cast<uint8_t>(loadAddress));
                 
                 if (!success) {
+                    statusLabel->setText("Status: Not Valid");
+                    statusLabel->setStyleSheet("font-weight: bold; padding: 5px; color: red;");
                     programDisplay->setText("Load Failed: Ensure that all instructions match the Vole machine specifications and the target memory address is even (0x00, 0x02...).");
                     return; 
                 }
+                statusLabel->setText("Status: Valid");
+                statusLabel->setStyleSheet("font-weight: bold; padding: 5px; color: green;");
+
                 
                 QFile file(fileName);
                 if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -237,8 +266,13 @@ int main(int argc, char *argv[]) {
         update_state();
 
         if (machine.get_error()) {
-            QMessageBox::critical(&window, "Execution Error", "An invalid instruction or error occurred during execution!");
-        } else if (machine.get_halted()) {
+            statusLabel->setText("Status: Execution Error");
+            statusLabel->setStyleSheet("font-weight: bold; padding: 4px 10px; border-radius: 4px; background: #ffebee; color: #c62828;");
+            QMessageBox::critical(&window, "Execution Error", "An invalid instruction or runtime fault occurred!");
+        } 
+        else if (machine.get_halted()) {
+            statusLabel->setText("Status: Halted");
+            statusLabel->setStyleSheet("font-weight: bold; padding: 4px 10px; border-radius: 4px; background: #e3f2fd; color: #1565c0;");
             QMessageBox::information(&window, "Halted", "Program executed the halt instruction (C000) successfully.");
         }
     });
@@ -257,21 +291,30 @@ int main(int argc, char *argv[]) {
         update_state();     
 
         if (machine.get_error()) {
-            QMessageBox::critical(&window, "Execution Error","An invalid instruction or error occurred during execution!");
-        } else if (machine.get_halted()) {
+            statusLabel->setText("Status: Execution Error");
+            statusLabel->setStyleSheet("font-weight: bold; padding: 4px 10px; border-radius: 4px; background: #ffebee; color: #c62828;");
+            QMessageBox::critical(&window, "Execution Error", "Program encountered an error and execution stopped!");
+        } 
+        else if (machine.get_halted()) {
+            statusLabel->setText("Status: Halted");
+            statusLabel->setStyleSheet("font-weight: bold; padding: 4px 10px; border-radius: 4px; background: #e3f2fd; color: #1565c0;");
             QMessageBox::information(&window, "Halted", "Program ran to completion and halted successfully.");
         }
     });
 
     // Reset Button Connection
-    QObject::connect(resetButton, &QPushButton::clicked, [&]() {
+   QObject::connect(resetButton, &QPushButton::clicked, [&]() {
         machine.reset();
         loadAddressInput->setText("00");
         programDisplay->clear();
+        outputDisplay->clear();
         update_state();
-        QMessageBox::information(&window, "Reset", "Simulator has been reset.");
+
+        statusLabel->setText("Status: Idle");
+        statusLabel->setStyleSheet("font-weight: bold; padding: 4px 10px; border-radius: 4px; background: #e0e0e0; color: #555;");
     });
 
+    
     QObject::connect(overwriteRegButton, &QPushButton::clicked, [&]() {
         bool ok1, ok2;
         QString regStr = QInputDialog::getText(&window, "Overwrite Register",
