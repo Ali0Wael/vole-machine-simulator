@@ -34,7 +34,7 @@ void CU::execute(){
     uint8_t i1, i2;
     if (5 <= ir.get_opcode() && ir.get_opcode() <= 10){
         uint8_t i1 = ir.get_operand1();
-        uint8_t i2 = ir.get_operand1();
+        uint8_t i2 = ir.get_operand2();
     }
 
     switch(ir.get_opcode()){
@@ -114,9 +114,7 @@ void CU::load(){
 void CU::load(uint8_t value){
     registers[ir.get_dest()].set_value(value);
 }
-void CU::load(float value){
-    registers[ir.get_dest()].set_value(value);
-}
+
 
 void CU::load_immediate(){
     uint8_t i = calculate_memory_address(); 

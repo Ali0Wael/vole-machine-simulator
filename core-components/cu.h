@@ -21,7 +21,6 @@ class CU{
         
         void load();
         void load(uint8_t value);
-        void load(float value);
         void load_immediate();
         void store();
         void move();

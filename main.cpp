@@ -192,19 +192,22 @@ int main(int argc, char *argv[]) {
         if (addressText.isEmpty()) {            
             addressText = "00"; 
         }
-        
 
         bool validHex;
         int loadAddress = addressText.toInt(&validHex, 16);
 
         if (validHex && loadAddress >= 0 && loadAddress <= 255) {
-            QString fileName = QFileDialog::getOpenFileName(&window, "Open Program", "", "Text Files (*.txt)");
+            // Allows selecting .txt, .docx, .doc, .pdf, or any other file
+            QString fileName = QFileDialog::getOpenFileName(&window, 
+                                                            "Open Program", 
+                                                            "", 
+                                                            "All Files (*.*);;Text Files (*.txt);;Documents (*.pdf *.docx *.doc)");
             if (!fileName.isEmpty()) {
                 
                 bool success = machine.load_program(fileName.toStdString(), static_cast<uint8_t>(loadAddress));
                 
                 if (!success) {
-                    programDisplay->setText("ERROR: Invalid Vole instructions or user tried loading starting from an odd indexed memory cell. Load failed.");
+                    programDisplay->setText("Load Failed: Ensure that all instructions match the Vole machine specifications and the target memory address is even (0x00, 0x02...).");
                     return; 
                 }
                 
@@ -254,7 +257,7 @@ int main(int argc, char *argv[]) {
         update_state();     
 
         if (machine.get_error()) {
-            QMessageBox::critical(&window, "Execution Error", "Program crashed due to an error during execution!");
+            QMessageBox::critical(&window, "Execution Error","An invalid instruction or error occurred during execution!");
         } else if (machine.get_halted()) {
             QMessageBox::information(&window, "Halted", "Program ran to completion and halted successfully.");
         }

@@ -26,8 +26,6 @@ bool VoleMachine::load_program(string filename,uint8_t loc) {
     ifstream file(filename);
     if (!file.is_open()) { return false; }
 
-    bool loaded = false;
-    uint8_t start_address = loc;
     uint8_t c_address = loc;
     string name;
     vector <string> v_ins;
@@ -66,31 +64,37 @@ bool VoleMachine::load_program(string filename,uint8_t loc) {
     }
 
 
-    if(is_even_memory_loc(c_address)){
+    bool valid = true;
+    if(!is_even_memory_loc(c_address)) valid = false;
+    for (int i = 0; i < v_ins.size(); i++) {
+            string name = v_ins[i];
+            if (!is_valid_instruction(name)) valid = false;
+    }
+
+
+    if(valid){
+        
+        pc.set_value(c_address);
 
         for (int i = 0; i < v_ins.size(); i++) {
             string name = v_ins[i];
+        
 
+            string ins1 = name.substr(0, 2);
+            string ins2 = name.substr(2, 2);
 
-            if (is_valid_instruction(name)) {
-                loaded = true;
+            uint8_t instruction_1 = stoi(ins1, nullptr, 16);
+            uint8_t instruction_2 = stoi(ins2, nullptr, 16);
 
-                string ins1 = name.substr(0, 2);
-                string ins2 = name.substr(2, 2);
+            memory.write(c_address, instruction_1);
+            c_address += 1;
 
-                uint8_t instruction_1 = stoi(ins1, nullptr, 16);
-                uint8_t instruction_2 = stoi(ins2, nullptr, 16);
-
-                memory.write(c_address, instruction_1);
-                c_address += 1;
-
-                memory.write(c_address, instruction_2);
-                c_address += 1;
-            }
+            memory.write(c_address, instruction_2);
+            c_address += 1;
+            
         }
     }
-    if(loaded) pc.set_value(start_address);
-    return loaded;
+    return valid;
 }
 
 
