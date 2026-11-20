@@ -74,7 +74,7 @@ void CU::execute(){
             break;
         
         case 10:
-            load(alu.rotate(registers[i1].get_value(), registers[i2].get_value()));
+            load(alu.rotate(registers[ir.get_dest()].get_value(), i2));
             break;
         
         case 11:

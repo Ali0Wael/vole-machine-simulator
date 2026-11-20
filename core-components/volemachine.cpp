@@ -73,7 +73,9 @@ bool VoleMachine::load_program(string filename,uint8_t loc) {
 
 
     if(valid){
-        
+        halted = false;
+        error = false;
+        if(!screen_buffer_.empty()) screen_buffer_+='\n';
         pc.set_value(c_address);
 
         for (int i = 0; i < v_ins.size(); i++) {
